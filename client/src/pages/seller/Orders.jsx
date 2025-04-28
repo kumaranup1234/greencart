@@ -20,6 +20,20 @@ const Orders = () => {
         }
     };
 
+    const handleStatusChange = async (orderId, newStatus) => {
+        try {
+            const { data } = await axios.put(`/api/order/seller/${orderId}/status`, { status: newStatus});
+            if(data.success){
+                toast.success(data.message)
+                fetchOrders();
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
 
     useEffect(()=>{
         fetchOrders();
@@ -64,6 +78,22 @@ const Orders = () => {
                         <p>Method: {order.paymentType}</p>
                         <p>Date: {new Date(order.createdAt).toLocaleDateString()}</p>
                         <p>Payment: {order.isPaid ? "Paid" : "Pending"}</p>
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor={`status-${order._id}`} className="font-medium">Status:</label>
+                            <select
+                                id={`status-${order._id}`}
+                                value={order.status}
+                                onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                                className="border rounded p-1 shrink-0"
+                            >
+                                <option value="Order Placed">Order Placed</option>
+                                <option value="Packed">Packed</option>
+                                <option value="Shipped">Shipped</option>
+                                <option value="Out for Delivery">Out for Delivery</option>
+                                <option value="Delivered">Delivered</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             ))}

@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from "cloudinary"
 import Product from "../models/Product.js"
+import Rating from "../models/Rating.js";
 
 // Add Product : /api/product/add
 export const addProduct = async (req, res)=>{
@@ -54,6 +55,87 @@ export const changeStock = async (req, res)=>{
         const { id, inStock } = req.body
         await Product.findByIdAndUpdate(id, {inStock})
         res.json({success: true, message: "Stock Updated"})
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// Add Rating /:id/rate
+export const addRating = async (req, res)=>{
+    try {
+        const { rating, comment } = req.body;
+        const { id } = req.params;
+        const numericRating = Number(rating);
+        if (numericRating < 1 || numericRating > 5) {
+            return res.status(400).json({ success: false, message: "Rating must be between 1 and 5" });
+        }
+        const addRating = {
+            rating : numericRating,
+            userId : req.user._id,
+            productId : id,
+            comment : comment
+        }
+
+        await Rating.create(addRating)
+        const product = await Product.findById(id);
+
+        const newCount = product.ratings.count + 1;
+        const newAverage = ((product.ratings.average * product.ratings.count) + numericRating) / newCount;
+
+        product.ratings.count = newCount;
+        product.ratings.average = newAverage;
+        await product.save();
+        res.json({success: true, message: "Rating Added"})
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// Update Rating /:id/rate
+export const updateRating = async (req, res)=>{
+    try {
+        const { rating, comment } = req.body;
+        const { id } = req.params;
+        const numericRating = Number(rating);
+        if (numericRating < 1 || numericRating > 5) {
+            return res.status(400).json({ success: false, message: "Rating must be between 1 and 5" });
+        }
+
+        const ratingDoc = await Rating.findOne({ productId: id, userId: req.user._id });
+
+        if (!ratingDoc) {
+            return res.status(404).json({ success: false, message: "No existing rating found" });
+        }
+
+        const oldRating = ratingDoc.rating;
+
+        ratingDoc.rating = numericRating;
+        if (comment !== undefined) {
+            ratingDoc.comment = comment;
+        }
+        await ratingDoc.save();
+
+        const product = await Product.findById(id);
+        const count = product.ratings.count;
+        const newAverage = ((product.ratings.average * count) - oldRating + numericRating) / count;
+        product.ratings.average = newAverage;
+        await product.save();
+
+        res.json({ success: true, message: "Rating updated successfully" });
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// Get All reviews /:id/reviews
+export const getProductReviews = async (req, res)=>{
+    try {
+        const { id } = req.params;
+        const reviews = await Rating.find({productId: id})
+        res.json({success: true, reviews})
     } catch (error) {
         console.log(error.message);
         res.json({ success: false, message: error.message })

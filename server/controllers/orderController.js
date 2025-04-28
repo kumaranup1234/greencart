@@ -187,3 +187,22 @@ export const getAllOrders = async (req, res)=>{
         res.json({ success: false, message: error.message });
     }
 }
+
+// Update status of orders (for seller / admin) : /api/order/seller/:id/status
+export const updateOrderStatus = async (req, res)=>{
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        const order = await Order.findById(id);
+
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+        order.status = status;
+        await order.save();
+        res.json({ success: true, message: 'Order status updated' });
+
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
