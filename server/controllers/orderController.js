@@ -2,6 +2,7 @@ import Order from "../models/Order.js";
 import Product from "../models/Product.js";
 import stripe from "stripe"
 import User from "../models/User.js"
+import Rating from "../models/Rating.js";
 
 // Place Order COD : /api/order/cod
 export const placeOrderCOD = async (req, res)=>{
@@ -168,7 +169,45 @@ export const getUserOrders = async (req, res)=>{
         const orders = await Order.find({
             userId,
             $or: [{paymentType: "COD"}, {isPaid: true}]
-        }).populate("items.product address").sort({createdAt: -1});
+        }).populate("items.product address").sort({createdAt: -1}).lean();
+
+        const productIds = [];
+        orders.forEach(order => {
+            order.items.forEach(item => {
+                if (!productIds.includes(item.product._id.toString())) {
+                    productIds.push(item.product._id.toString());
+                }
+            });
+        })
+
+        const ratings = await Rating.find({
+            userId,
+            productId: { $in: productIds }
+        })
+
+        const ratingMap = {};
+        ratings.forEach(rating => {
+            ratingMap[rating.productId.toString()] = {
+                rating: rating.rating,
+                comment: rating.comment
+            };
+        })
+
+
+        for (const order of orders) {
+            for (const item of order.items) {
+                const productIdStr = item.product._id.toString();
+                if (ratingMap[productIdStr]) {
+                    item.product.userRating = ratingMap[productIdStr].rating;
+                    item.product.userComment = ratingMap[productIdStr].comment;
+                } else {
+                    item.product.userRating = null;
+                    item.product.userComment = null;
+                }
+            }
+        }
+
+
         res.json({ success: true, orders });
     } catch (error) {
         res.json({ success: false, message: error.message });
@@ -199,6 +238,10 @@ export const updateOrderStatus = async (req, res)=>{
             return res.status(404).json({ success: false, message: 'Order not found' });
         }
         order.status = status;
+        if (status === 'Delivered') {
+            order.deliveredAt = Date.now();
+            order.isPaid = true;
+        }
         await order.save();
         res.json({ success: true, message: 'Order status updated' });
 

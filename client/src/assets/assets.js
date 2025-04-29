@@ -24,7 +24,7 @@ import main_banner_bg from "./main_banner_bg.png";
 import main_banner_bg_sm from "./main_banner_bg_sm.png";
 import bottom_banner_image from "./bottom_banner_image.png";
 import bottom_banner_image_sm from "./bottom_banner_image_sm.png";
-import add_address_iamge from "./add_address_image.svg";
+import add_address_image from "./add_address_image.svg";
 import organic_vegitable_image from "./organic_vegitable_image.png";
 import fresh_fruits_image from "./fresh_fruits_image.png";
 import bottles_image from "./bottles_image.png";
@@ -69,6 +69,10 @@ import vanilla_muffins_image from "./vanilla_muffins_image.png";
 import quinoa_image from "./quinoa_image.png";
 import brown_rice_image from "./brown_rice_image.png";
 import barley_image from "./barley_image.png";
+import analytics_icon from "./analytics_icon.png";
+import orbIcon from "./orbIcon.svg";
+import sixDots from "./sixDots.svg";
+
 
 export const assets = {
   logo,
@@ -96,8 +100,11 @@ export const assets = {
   main_banner_bg_sm,
   bottom_banner_image,
   bottom_banner_image_sm,
-  add_address_iamge,
+  add_address_image,
   box_icon,
+  analytics_icon,
+  orbIcon,
+  sixDots,
 };
 
 export const categories = [

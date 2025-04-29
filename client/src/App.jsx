@@ -18,6 +18,7 @@ import AddProduct from './pages/seller/AddProduct';
 import ProductList from './pages/seller/ProductList';
 import Orders from './pages/seller/Orders';
 import Loading from './components/Loading';
+import Analytics from "./pages/seller/Analytics.jsx";
 
 const App = () => {
 
@@ -46,6 +47,7 @@ const App = () => {
             <Route index element={isSeller ? <AddProduct/> : null} />
             <Route path='product-list' element={<ProductList/>} />
             <Route path='orders' element={<Orders/>} />
+            <Route path='analytics' element={<Analytics /> } />
           </Route>
         </Routes>
       </div>

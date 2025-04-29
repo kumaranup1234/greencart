@@ -1,6 +1,8 @@
 import { v2 as cloudinary } from "cloudinary"
 import Product from "../models/Product.js"
 import Rating from "../models/Rating.js";
+import Order from "../models/Order.js";
+import mongoose from "mongoose";
 
 // Add Product : /api/product/add
 export const addProduct = async (req, res)=>{
@@ -64,15 +66,31 @@ export const changeStock = async (req, res)=>{
 // Add Rating /:id/rate
 export const addRating = async (req, res)=>{
     try {
-        const { rating, comment } = req.body;
+        const { rating, comment, userId } = req.body;
         const { id } = req.params;
         const numericRating = Number(rating);
         if (numericRating < 1 || numericRating > 5) {
             return res.status(400).json({ success: false, message: "Rating must be between 1 and 5" });
         }
+
+        const deliveredOrder = await Order.findOne({
+            userId: userId,
+            "items.product":id,
+            status: "Delivered",
+        });
+
+        if (!deliveredOrder) {
+            return res.status(400).json({ success: false, message: "You can only rate products after delivery." });
+        }
+
+        const existingRating = await Rating.findOne({ productId: id, userId });
+
+        if (existingRating) {
+            return res.status(400).json({ success: false, message: "You have already rated this product." });
+        }
         const addRating = {
             rating : numericRating,
-            userId : req.user._id,
+            userId,
             productId : id,
             comment : comment
         }

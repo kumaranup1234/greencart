@@ -17,9 +17,9 @@ const ProductCard = ({product}) => {
                 <p className="text-gray-700 font-medium text-lg truncate w-full">{product.name}</p>
                 <div className="flex items-center gap-0.5">
                     {Array(5).fill('').map((_, i) => (
-                           <img key={i} className="md:w-3.5 w3" src={i < 4 ? assets.star_icon : assets.star_dull_icon} alt=""/>
+                           <img key={i} className="md:w-3.5 w3" src={i < Math.round(product.ratings.average) ? assets.star_icon : assets.star_dull_icon} alt=""/>
                     ))}
-                    <p>(4)</p>
+                    <p>({product.ratings.count})</p>
                 </div>
                 <div className="flex items-end justify-between mt-3">
                     <p className="md:text-xl text-base font-medium text-primary">

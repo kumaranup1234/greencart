@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useAppContext } from '../context/AppContext'
-import { dummyOrders } from '../assets/assets'
+import RatingModal from "../components/RatingModal.jsx";
 
 const MyOrders = () => {
 
     const [myOrders, setMyOrders] = useState([])
     const {currency, axios, user} = useAppContext()
+    const [selectedProductId, setSelectedProductId] = useState(null)
+    const [modal, setOpenModal] = useState(false)
+    const [existingReview, setExistingReview] = useState(null)
 
     const fetchMyOrders = async ()=>{
         try {
             const { data } = await axios.get('/api/order/user')
+            console.log(data);
             if(data.success){
                 setMyOrders(data.orders)
             }
@@ -18,7 +22,17 @@ const MyOrders = () => {
         }
     }
 
-    useEffect(()=>{
+    const handleModalOpen = (item) => {
+        const existingReview = {
+            rating: item.product.userRating,
+            comment: item.product.userComment
+        };
+        setSelectedProductId(item.product._id);
+        setOpenModal(true);
+        setExistingReview(existingReview);
+    }
+
+    useEffect(() => {
         if(user){
             fetchMyOrders()
         }
@@ -57,6 +71,11 @@ const MyOrders = () => {
                         <p>Quantity: {item.quantity || "1"}</p>
                         <p>Status: {order.status}</p>
                         <p>Date: {new Date(order.createdAt).toLocaleDateString()}</p>
+                        <p className="text-blue-500 cursor-pointer"
+                           onClick={() => {
+                               handleModalOpen(item)
+                           }}
+                        >Rate & Review Product</p>
                     </div>
                     <p className='text-primary text-lg font-medium'>
                         Amount: {currency}{item.product.offerPrice * item.quantity}
@@ -66,7 +85,7 @@ const MyOrders = () => {
                 ))}
             </div>
         ))}
-      
+        {modal && <RatingModal modal={modal} setOpenModal={setOpenModal} productId={selectedProductId} existingReview={existingReview} setExistingReview={setExistingReview}/>}
     </div>
   )
 }
