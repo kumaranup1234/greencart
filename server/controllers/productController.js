@@ -2,7 +2,7 @@ import { v2 as cloudinary } from "cloudinary"
 import Product from "../models/Product.js"
 import Rating from "../models/Rating.js";
 import Order from "../models/Order.js";
-import mongoose from "mongoose";
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Add Product : /api/product/add
 export const addProduct = async (req, res)=>{
@@ -157,5 +157,43 @@ export const getProductReviews = async (req, res)=>{
     } catch (error) {
         console.log(error.message);
         res.json({ success: false, message: error.message })
+    }
+}
+
+// Generate AI Description POST: /generate-description
+export const generateAiDescription = async (req, res) => {
+    try {
+        const modelName = 'gemini-2.0-flash';
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({ model: modelName });
+        const { productName, category } = req.body;
+
+        if (!productName || !category) {
+            return res.status(400).json({ error: 'Product name and category are required.' });
+        }
+
+        const prompt = `Generate a short and practical 3-point product description for "${productName}" in the "${category}" category.
+        Each point should:
+        - Be clear and simple.
+        - Mention either a key benefit, nutrient, or common use case.
+        - Avoid heavy or generic marketing words.
+        - Be concise (max 8–10 words).
+        - Format each point on a new line.
+        Do not include stars, numbers, or quotes.`;
+
+        const result = await model.generateContent(prompt);
+        const generatedText = result.response?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (generatedText) {
+            // create the array
+            const descriptionArray = generatedText.split('\n').map(line => line.trim()).filter(line => line !== '');
+            console.log('Generated description:', descriptionArray);
+            res.json({ success: true, description: descriptionArray });
+        } else {
+            res.status(500).json({ error: 'Failed to generate description.' });
+        }
+    } catch (error) {
+        console.error('Error generating description:', error);
+        res.status(500).json({ error: 'Internal server error.' });
     }
 }

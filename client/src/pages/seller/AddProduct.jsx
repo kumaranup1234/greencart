@@ -50,7 +50,32 @@ const AddProduct = () => {
             toast.error(error.message)
         }
         
-      }
+    }
+
+    const handleGenerateDescription = async (e) => {
+        e.preventDefault();
+
+        if (!name || !category) return toast.error(
+            'Please fill all the fields'
+        )
+
+        try {
+            const { data } = await axios.post('/api/product/generate-description', {
+                productName: name,
+                category,
+            })
+
+            if (data.success){
+                setDescription(data.description.join('\n'));
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+
+
+    }
 
   return (
     <div className="no-scrollbar flex-1 h-[95vh] overflow-y-scroll flex flex-col justify-between">
@@ -83,6 +108,7 @@ const AddProduct = () => {
                     <textarea onChange={(e)=> setDescription(e.target.value)} value={description}
                      id="product-description" rows={4} className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none" placeholder="Type here"></textarea>
                 </div>
+                <button onClick={handleGenerateDescription} className="px-8 py-2.5 bg-primary text-white font-medium rounded cursor-pointer">Generate AI Description</button>
                 <div className="w-full flex flex-col gap-1">
                     <label className="text-base font-medium" htmlFor="category">Category</label>
                     <select onChange={(e)=> setCategory(e.target.value)} value={category} 
