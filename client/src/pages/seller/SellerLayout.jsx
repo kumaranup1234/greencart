@@ -17,7 +17,9 @@ const SellerLayout = () => {
 
     const logout = async ()=>{
         try {
-            const { data } = await axios.get('/api/seller/logout');
+            const { data } = await axios.get('/api/seller/logout', {
+                withCredentials: true,
+            });
             if(data.success){
                 toast.success(data.message)
                 setIsSeller(false);
