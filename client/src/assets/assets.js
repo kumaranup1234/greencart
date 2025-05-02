@@ -156,13 +156,13 @@ export const categories = [
     text: "Snacks",
     path: "Snacks",
     image: amulDark,
-    bgColor: "#F1E3F9",
+    bgColor: "#FFF3E2",
   },
   {
     text: "HouseHold",
     path: "HouseHold",
     image: surfExcel,
-    bgColor: "#F1E3F9",
+    bgColor: "#E2F8F0",
   }
 ];
 
