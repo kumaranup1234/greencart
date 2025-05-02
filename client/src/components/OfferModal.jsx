@@ -1,31 +1,25 @@
-import {useEffect, useState} from "react"
+import {useState} from "react"
 import axios from "axios";
 import toast from "react-hot-toast";
 import {useAppContext} from "../context/AppContext.jsx";
 
-export default function OfferModal({ modal, setOpenModal, product, existingOffer }) {
-    const [isActive, setIsActive] = useState(existingOffer?.isActive || false);
-    const [percentage, setPercentage] = useState(existingOffer?.percentage || 0);
-    const [validTill, setValidTill] = useState(
-        existingOffer?.validTill ? new Date(existingOffer.validTill).toISOString().split("T")[0] : ""
-    );
-    const [finalOfferPrice, setFinalOfferPrice] = useState(product?.offerPrice || 0);
+export default function OfferModal({ modal, setOpenModal, product}) {
+    const [newPrice, setNewPrice] = useState(product.offerPrice || 0);
     const {currency} = useAppContext()
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (percentage < 0 || percentage > 100) {
-            toast.success("Please enter a valid value in a range of 0 to 100");
+        if (newPrice < 0 || newPrice > product.price) {
+            toast.success("Please enter a valid price");
             return;
         }
 
         try {
             toast.loading("Updating offer Price");
             const response = await axios.post(`/api/product/${product._id}/offer`, {
-                isActive,
-                percentage,
-                validTill
+                newOfferPrice: newPrice
             });
             console.log(response);
             if (response.data.success) {
@@ -39,24 +33,6 @@ export default function OfferModal({ modal, setOpenModal, product, existingOffer
             toast.error(error.message);
         }
     }
-
-    useEffect(() => {
-
-        if (percentage === "" || isNaN(percentage)) {
-            setFinalOfferPrice(product.offerPrice);
-            return;
-        }
-
-        const numericPercentage = parseFloat(percentage);
-        if (numericPercentage === 0) {
-            setFinalOfferPrice(product.offerPrice);
-            return;
-        }
-
-        const discountAmount = (parseFloat(percentage) / 100) * product.price;
-        const calculatedPrice = product.price - discountAmount;
-        setFinalOfferPrice(calculatedPrice.toFixed(2));
-    }, [percentage]);
 
     return (
         <div>
@@ -91,42 +67,18 @@ export default function OfferModal({ modal, setOpenModal, product, existingOffer
                         </div>
 
                         <div className="mb-6">
-                            <label className="block text-gray-600 mb-2">Offer Percentage</label>
+                            <label className="block text-gray-600 mb-2">New Offer Price</label>
                             <input
                                 type="number"
-                                value={percentage}
+                                value={newPrice}
                                 onChange={(e) => {
-                                    setPercentage(e.target.value);
+                                    setNewPrice(e.target.value);
                                 }}
                                 min="0"
                                 max="99"
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="Enter offer percentage"
                             />
-                            <p className="text-blue-500 font-bold">New Offer Price: {currency}{finalOfferPrice}</p>
-                        </div>
-
-
-                        <div className="mb-6">
-                            <label className="block text-gray-600 mb-2">Valid Till</label>
-                            <input
-                                type="date"
-                                value={validTill}
-                                onChange={(e) => setValidTill(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            />
-                        </div>
-
-                        <div className="mb-6">
-                            <label className="flex items-center space-x-2">
-                                <input
-                                    type="checkbox"
-                                    checked={isActive}
-                                    onChange={() => setIsActive(!isActive)}
-                                    className="form-checkbox h-5 w-5 text-blue-600"
-                                />
-                                <span className="text-gray-600">Activate Offer</span>
-                            </label>
                         </div>
 
                         <div className="flex justify-end space-x-2">
@@ -138,8 +90,8 @@ export default function OfferModal({ modal, setOpenModal, product, existingOffer
                             </button>
                             <button
                                 onClick={handleSubmit}
-                                disabled={percentage === 0}
-                                className={`px-4 py-2 rounded-md text-white ${percentage > 0 ? "bg-blue-600 hover:bg-blue-700" : "bg-blue-400 cursor-not-allowed"} transition-colors`}
+                                disabled={newPrice === 0}
+                                className={`px-4 py-2 rounded-md text-white ${newPrice > 0 ? "bg-blue-600 hover:bg-blue-700" : "bg-blue-400 cursor-not-allowed"} transition-colors`}
                             >
                                 {existingOffer ? "Update Offer" : "Add Offer"}
                             </button>

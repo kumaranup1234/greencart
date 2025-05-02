@@ -11,12 +11,7 @@ const productSchema = new mongoose.Schema({
     ratings: {
         average: { type: Number, default: 0 },
         count: { type: Number, default: 0 }
-    },
-    offer: {
-        isActive: { type: Boolean, default: false },
-        percentage: { type: Number, default: 0 },
-        validTill: { type: Date },
-    },
+    }
 }, { timestamps: true})
 
 const Product = mongoose.models.product || mongoose.model('product', productSchema)

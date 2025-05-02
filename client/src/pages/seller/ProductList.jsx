@@ -39,7 +39,7 @@ const ProductList = () => {
                                 <th className="px-4 py-3 font-semibold truncate">Category</th>
                                 <th className="px-4 py-3 font-semibold truncate hidden md:block">Selling Price</th>
                                 <th className="px-4 py-3 font-semibold truncate">In Stock</th>
-                                <th className="px-4 py-3 font-semibold truncate">Add/Edit Offer</th>
+                                <th className="px-4 py-3 font-semibold truncate">Add/Edit Offer Price</th>
                             </tr>
                         </thead>
                         <tbody className="text-sm text-gray-500">
@@ -65,7 +65,7 @@ const ProductList = () => {
                                             onClick={() => handleOfferClick(product)}
                                             className="text-blue-600 hover:underline"
                                         >
-                                            {product.offer.isActive ? 'Edit Offer' : 'Add Offer'}
+                                            {product.offerPrice >= 0 ? 'Edit Offer price' : 'Add Offer Price'}
                                         </button>
                                     </td>
                                 </tr>
@@ -79,7 +79,6 @@ const ProductList = () => {
                 modal={handleModalOpen}
                 setOpenModal={setModalOpen}
                 product={selectedProduct}
-                existingOffer={selectedProduct?.offer}
             />
         )}
     </div>

@@ -63,11 +63,13 @@ const ProductDetails = () => {
 
                     <div className="mt-6">
                         <p className="text-gray-500/70 line-through">MRP: {currency}{product.price}</p>
-                        <p className="text-2xl font-medium">MRP: {currency}{product.offerPrice}</p>
-                        <span className="text-gray-500/70">(inclusive of all taxes)</span>
+                        <p className="text-2xl font-medium">Offer Price: {currency}{product.offerPrice}</p>
+                        <p className="text-green-600 font-medium text-sm mt-1">
+                            You Save {currency}{product.price - product.offerPrice}  ({Math.round(((product.price - product.offerPrice) / product.price) * 100)}% OFF)
+                        </p>
+                        <span className="text-gray-500/70 text-sm">(inclusive of all taxes)</span>
                     </div>
-
-                    <p className="text-base font-medium mt-6">About Product</p>
+                    <p className="text-base font-medium mt-3">About Product</p>
                     <ul className="list-disc ml-4 text-gray-500/70">
                         {product.description.map((desc, index) => (
                             <li key={index}>{desc}</li>

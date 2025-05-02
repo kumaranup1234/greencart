@@ -72,6 +72,8 @@ import barley_image from "./barley_image.png";
 import analytics_icon from "./analytics_icon.png";
 import orbIcon from "./orbIcon.svg";
 import sixDots from "./sixDots.svg";
+import amulDark from "./amul-dark.jpeg";
+import surfExcel from "./surfexcel.jpg";
 
 
 export const assets = {
@@ -150,6 +152,18 @@ export const categories = [
     image: grain_image,
     bgColor: "#F1E3F9",
   },
+  {
+    text: "Snacks",
+    path: "Snacks",
+    image: amulDark,
+    bgColor: "#F1E3F9",
+  },
+  {
+    text: "HouseHold",
+    path: "HouseHold",
+    image: surfExcel,
+    bgColor: "#F1E3F9",
+  }
 ];
 
 export const footerLinks = [

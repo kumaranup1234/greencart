@@ -6,19 +6,11 @@ import {useAppContext} from "../context/AppContext";
 const ProductCard = ({product}) => {
     const {currency, addToCart, removeFromCart, cartItems, navigate} = useAppContext()
 
-    const now = new Date();
-    const isOfferActive = product.offer?.isActive && new Date(product.offer.validTill) > now;
-
-    const percentagePrice = isOfferActive
-        ? Math.round(product.price * (1 - product.offer.percentage / 100))
-        : Infinity;
-
-    const finalPrice = Math.min(product.price, product.offerPrice, percentagePrice);
     const originalPrice = product.price;
-
+    const offerPrice = product.offerPrice;
+    const finalPrice = Math.min(originalPrice, offerPrice);
     const savings = originalPrice - finalPrice;
     const discountPercent = Math.round((savings / originalPrice) * 100);
-
 
     return product && (
         <div onClick={() => {
