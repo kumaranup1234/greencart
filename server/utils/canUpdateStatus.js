@@ -1,5 +1,5 @@
 export const validTransitions = {
-    Placed: ["Processing", "Cancelled"],
+    "Order Placed": ["Processing", "Cancelled"],
     Processing: ["Packed", "Cancelled"],
     Packed: ["Out for Delivery"],
     "Out for Delivery": ["Delivered", "Failed"],
