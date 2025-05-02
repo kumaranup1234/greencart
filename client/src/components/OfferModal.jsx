@@ -93,7 +93,7 @@ export default function OfferModal({ modal, setOpenModal, product}) {
                                 disabled={newPrice === 0}
                                 className={`px-4 py-2 rounded-md text-white ${newPrice > 0 ? "bg-blue-600 hover:bg-blue-700" : "bg-blue-400 cursor-not-allowed"} transition-colors`}
                             >
-                                {existingOffer ? "Update Offer" : "Add Offer"}
+                                {"Update Offer"}
                             </button>
                         </div>
                     </div>
