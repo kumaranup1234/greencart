@@ -209,8 +209,8 @@ export const updateProductOffer = async (req, res) => {
         if (!product) {
             return res.status(404).json({ success: false, message: 'Product not found' });
         }
-        if (!newOfferPrice <= product.price) {
-            return res.status(400).json({ success: false, message: 'Offer price can exceed the product price' });
+        if (newOfferPrice > product.price || newOfferPrice < 0) {
+            return res.status(400).json({ success: false, message: 'Offer price can exceed the product price or below then that' });
         }
 
         product.offerPrice = newOfferPrice;

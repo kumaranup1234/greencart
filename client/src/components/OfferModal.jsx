@@ -26,6 +26,7 @@ export default function OfferModal({ modal, setOpenModal, product}) {
                 toast.dismiss();
                 toast.success(response.data.message);
             } else {
+                toast.dismiss();
                 toast.error(response.data.message);
             }
             setOpenModal(false);
