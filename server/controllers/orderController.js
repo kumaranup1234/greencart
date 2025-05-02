@@ -3,6 +3,7 @@ import Product from "../models/Product.js";
 import stripe from "stripe"
 import User from "../models/User.js"
 import Rating from "../models/Rating.js";
+import {canUpdateStatus, validTransitions} from "../utils/canUpdateStatus.js";
 
 // Place Order COD : /api/order/cod
 export const placeOrderCOD = async (req, res)=>{
@@ -228,7 +229,7 @@ export const getAllOrders = async (req, res)=>{
 }
 
 // Update status of orders (for seller / admin) : /api/order/seller/:id/status
-export const updateOrderStatus = async (req, res)=>{
+export const updateOrderStatus = async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
@@ -236,6 +237,18 @@ export const updateOrderStatus = async (req, res)=>{
 
         if (!order) {
             return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
+        const currentStatus = order.status;
+        const newStatus = status;
+
+        const allStatuses = Object.keys(validTransitions);
+        if (!allStatuses.includes(newStatus)) {
+            return res.status(400).json({ message: "Invalid status value" });
+        }
+
+        if (!canUpdateStatus(currentStatus, newStatus)) {
+            return res.status(400).json({ message: "Invalid status transition" });
         }
         order.status = status;
         if (status === 'Delivered') {
@@ -246,6 +259,6 @@ export const updateOrderStatus = async (req, res)=>{
         res.json({ success: true, message: 'Order status updated' });
 
     } catch (error) {
-        res.json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 }

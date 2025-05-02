@@ -19,6 +19,11 @@ import ProductList from './pages/seller/ProductList';
 import Orders from './pages/seller/Orders';
 import Loading from './components/Loading';
 import Analytics from "./pages/seller/Analytics.jsx";
+import PaymentMethods from "./pages/PaymentMethods.jsx";
+import RefundPolicy from "./pages/RefundPolicy.jsx";
+import ContactUs from "./pages/ContactUs.jsx";
+import FAQs from "./pages/FAQs.jsx";
+import DeliveryInfo from "./pages/DeliveryInfo.jsx";
 
 const App = () => {
 
@@ -49,6 +54,12 @@ const App = () => {
             <Route path='orders' element={<Orders/>} />
             <Route path='analytics' element={<Analytics /> } />
           </Route>
+          <Route path='/payment-methods' element={<PaymentMethods />} />
+          <Route path='/refund-policy' element={<RefundPolicy />} />
+          <Route path='/contact-us' element={<ContactUs />} />
+          <Route path='/faqs' element={<FAQs />} />
+          <Route path='/delivery-info' element={<DeliveryInfo />} />
+
         </Routes>
       </div>
      {!isSellerPath && <Footer/>}

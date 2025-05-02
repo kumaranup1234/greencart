@@ -16,7 +16,7 @@ const TopList = ({ heading, products }) => {
                         products.map(({ _id, product, totalOrdered }) => (
                             <div
                                 key={_id}
-                                className="flex-shrink-0 w-full sm:w-[48%] lg:w-[45%] xl:w-[48%] border border-gray-300/30 rounded-md p-3 flex gap-3 items-start bg-gray-50"
+                                className="flex-shrink-0 w-full sm:w-[48%] lg:w-[48%] xl:w-[58%] border border-gray-300/30 rounded-md p-3 flex gap-3 items-start bg-gray-50"
                             >
                                 <img
                                     src={product.image?.[0]}
@@ -24,7 +24,7 @@ const TopList = ({ heading, products }) => {
                                     className="w-16 h-16 object-cover rounded-md"
                                 />
                                 <div className="flex flex-col w-full">
-                                    <p className="font-medium text-gray-800 truncate">{product.name}</p>
+                                    <p className="font-medium text-gray-800 line-clamp-2">{product.name}</p>
                                     <p className="text-sm text-gray-500 truncate">{product.category}</p>
                                     <div className="text-sm text-primary font-semibold mt-1">
                                         ₹{product.offerPrice}

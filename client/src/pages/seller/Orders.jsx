@@ -88,8 +88,8 @@ const Orders = () => {
                                 className="border rounded p-1 shrink-0"
                             >
                                 <option value="Order Placed">Order Placed</option>
+                                <option value="Processing">Processing</option>
                                 <option value="Packed">Packed</option>
-                                <option value="Shipped">Shipped</option>
                                 <option value="Out for Delivery">Out for Delivery</option>
                                 <option value="Delivered">Delivered</option>
                                 <option value="Cancelled">Cancelled</option>

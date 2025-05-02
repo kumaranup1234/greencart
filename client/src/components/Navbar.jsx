@@ -43,7 +43,7 @@ const Navbar = () => {
             </NavLink>
             <NavLink to='/'>Home</NavLink>
             <NavLink to='/products'>All Product</NavLink>
-            <NavLink to='/'>Contact</NavLink>
+            <NavLink to='/contact-us'>Contact</NavLink>
 
 
             <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 rounded-full">
@@ -96,7 +96,7 @@ const Navbar = () => {
         {user && 
         <NavLink to="/my-orders" onClick={()=> setOpen(false)}>My Orders</NavLink>
         }
-        <NavLink to="/" onClick={()=> setOpen(false)}>Contact</NavLink>
+        <NavLink to="/contact-us" onClick={()=> setOpen(false)}>Contact</NavLink>
 
         {!user ? (
           <button onClick={()=>{

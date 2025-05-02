@@ -18,7 +18,7 @@ export const getPaymentType = async () => {
             if(item._id === "COD"){
                 cod = item.count;
             }else if(item._id === "Online"){
-                onnline = item.count;
+                online = item.count;
             }
         })
         return {cod, online};

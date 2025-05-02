@@ -197,3 +197,33 @@ export const generateAiDescription = async (req, res) => {
         res.status(500).json({ error: 'Internal server error.' });
     }
 }
+
+
+// Add, Edit, Update the offer Post /:productId/offer'
+export const updateProductOffer = async (req, res) => {
+    try {
+        const { productId } = req.params;
+        const { isActive, percentage, validTill } = req.body;
+
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+        if (isActive && (percentage < 1 || percentage > 90)) {
+            return res.status(400).json({ message: "Offer percentage must be between 1 and 90" });
+        }
+
+        product.offer = {
+            ...product.offer,
+            isActive: isActive,
+            percentage: isActive ? percentage : 0,
+            validTill: isActive ? validTill : null,
+        }
+
+        await product.save();
+        res.json({ success: true, message: 'Offer updated successfully' });
+
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+}

@@ -43,8 +43,8 @@ export default function RatingModal({ modal, setOpenModal, productId, existingRe
     return (
         <div>
             {modal && (
-                <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 animate-fade-in">
+                <div className="fixed bg-opacity-30 backdrop-blur-sm inset-0 flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 animate-fade-in border border-gray-300">
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-semibold text-gray-800">Rate Your Experience</h2>
                             <button onClick={() => setOpenModal(false)} className="text-gray-500 hover:text-gray-700">
