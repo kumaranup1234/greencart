@@ -2,6 +2,7 @@ import { v2 as cloudinary } from "cloudinary"
 import Product from "../models/Product.js"
 import Rating from "../models/Rating.js";
 import Order from "../models/Order.js";
+import fs from "fs";
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Add Product : /api/product/add
@@ -39,7 +40,7 @@ export const productList = async (req, res)=>{
     }
 }
 
-// Get single Product : /api/product/id
+// Get singleProduct:/api/product/id
 export const productById = async (req, res)=>{
     try {
         const { id } = req.body
@@ -51,7 +52,7 @@ export const productById = async (req, res)=>{
     }
 }
 
-// Change Product inStock : /api/product/stock
+// Change Product inStock: /api/product/stock
 export const changeStock = async (req, res)=>{
     try {
         const { id, inStock } = req.body
@@ -199,7 +200,7 @@ export const generateAiDescription = async (req, res) => {
 }
 
 
-// Add, Edit, Update the offer Post /:productId/offer'
+// Add, Edit, Update the offer Post /:productId/offer
 export const updateProductOffer = async (req, res) => {
     try {
         const { productId } = req.params;
@@ -222,3 +223,47 @@ export const updateProductOffer = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 }
+
+// image search
+// multer.single('image')
+export const imageSearchResults = async (req, res) => {
+    try {
+        const modelName = 'gemini-2.0-flash';
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({ model: modelName });
+
+        const imageFile = req.file;
+        if (!imageFile) {
+            return res.status(400).json({ success: false, message: "No image file uploaded." });
+        }
+
+        const imageData = await fs.promises.readFile(imageFile.path);
+        const base64ImageData = imageData.toString('base64');
+        const mimeType = imageFile.mimetype;
+
+        const prompt = "Give a short and specific label or name for the main item in this image. Avoid long descriptions. Example: 'Chocolate', 'Amul Chocolate', 'Milk Carton'.";
+
+        const result = await model.generateContent({
+            contents: [
+                {
+                    parts: [
+                        {
+                            inlineData: {
+                                mimeType,
+                                data: base64ImageData,
+                            },
+                        },
+                        { text: prompt },
+                    ],
+                },
+            ],
+        });
+
+        const textResponse = result.response.text();
+
+        res.status(200).json({ success: true, description: textResponse });
+
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};

@@ -74,6 +74,7 @@ import orbIcon from "./orbIcon.svg";
 import sixDots from "./sixDots.svg";
 import amulDark from "./amul-dark.jpeg";
 import surfExcel from "./surfexcel.jpg";
+import camera from "./camera_Icon.svg"
 
 
 export const assets = {
@@ -107,6 +108,7 @@ export const assets = {
   analytics_icon,
   orbIcon,
   sixDots,
+  camera
 };
 
 export const categories = [

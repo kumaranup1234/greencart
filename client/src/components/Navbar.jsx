@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, {useEffect, useRef} from 'react'
 import { NavLink } from 'react-router-dom'
 import { assets } from '../assets/assets'
 import { useAppContext } from '../context/AppContext'
@@ -6,6 +6,7 @@ import toast from 'react-hot-toast'
 
 const Navbar = () => {
     const [open, setOpen] = React.useState(false)
+    const fileInputRef = useRef();
     const {user, setUser, setShowUserLogin, navigate, setSearchQuery, searchQuery, getCartCount, axios} = useAppContext();
 
     const logout = async ()=>{
@@ -24,6 +25,51 @@ const Navbar = () => {
         
     }
 
+    const handleAllProductsClick = () => {
+        setSearchQuery('')
+    }
+    const handleCameraClick = (event) => {
+        try {
+            event.preventDefault();
+            fileInputRef.current.click();
+        } catch (error) {
+            console.log(error);
+            toast.error(error.message);
+        }
+    };
+
+    const handleFileChange = async (event) => {
+        try {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append("image", file);
+            toast.loading("Finding products...")
+
+            const { data } = await axios.post("/api/product/imageSearch", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            console.log(data);
+            if (data.success) {
+                toast.dismiss();
+                setSearchQuery(data.description);
+                toast.success("Search results updated.");
+                event.target.value = null;
+            } else {
+                event.target.value = null;
+                toast.error("No result from image search.");
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast.error("Image search failed.");
+        }
+    };
+
     useEffect(()=>{
       if(searchQuery.length > 0){
         navigate("/products")
@@ -41,8 +87,8 @@ const Navbar = () => {
             <NavLink to='/seller' className="border border-gray-300 px-3 py-1 rounded-full text-xs cursor-pointer opacity-80">Seller
                 Dashboard
             </NavLink>
-            <NavLink to='/'>Home</NavLink>
-            <NavLink to='/products'>All Product</NavLink>
+            <NavLink to='/'>Home </NavLink>
+            <NavLink to='/products' onClick={handleAllProductsClick}>All Product</NavLink>
             <NavLink to='/contact-us'>Contact</NavLink>
 
 
@@ -51,6 +97,14 @@ const Navbar = () => {
                        className="py-1.5 w-full bg-transparent outline-none placeholder-gray-500" type="text"
                        placeholder="Search products"/>
                 <img src={assets.search_icon} alt='search' className='w-4 h-4'/>
+                <input
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                />
+                <img src={assets.camera} alt='search' className='w-4 h-4 cursor-pointer' onClick={handleCameraClick}/>
             </div>
 
             <div onClick={() => navigate("/cart")} className="relative cursor-pointer">

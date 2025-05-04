@@ -10,7 +10,7 @@ import {
     updateRating,
     getProductReviews,
     generateAiDescription,
-    updateProductOffer
+    updateProductOffer, imageSearchResults
 } from '../controllers/productController.js';
 import authUser from "../middlewares/authUser.js";
 
@@ -21,6 +21,7 @@ productRouter.get('/list', productList)
 productRouter.get('/id', productById)
 productRouter.post('/stock', authSeller, changeStock)
 productRouter.post('/:id/rate', authUser, addRating);
+productRouter.post('/imageSearch', upload.single('image'), imageSearchResults)
 productRouter.put('/:id/rate', authUser, updateRating);
 productRouter.get('/:id/reviews', getProductReviews);
 productRouter.post('/generate-description', authSeller, generateAiDescription);
